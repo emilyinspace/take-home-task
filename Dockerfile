@@ -14,16 +14,16 @@ RUN apk add --update --no-cache python3 py3-pip
 # Specify the working directory
 WORKDIR /usr/src/app
 
-# Copy the requirements.txt to install them before running
-#COPY requirements.txt /usr/src/app/
+#COPY the project to /usr/src/app/
 COPY . /usr/src/app
 
-RUN python3 -m venv . && \
-    echo '~~~~~~~~~~~~~~' && \
-    pwd && \
-    ls -lhaR /usr/src/ && \
-    . ./bin/activate && \
-    /usr/src/bin/pip3 install -r requirements.txt
+# Install python dependencies
+RUN python3 -m venv .
+#ENV PATH="/usr/src/app/bin:$PATH"
+
+RUN . bin/activate && \
+    which python3 && \
+    python3 -m pip install -r requirements.txt
 
 # Expose default Flask port
 EXPOSE 5000
