@@ -1,0 +1,12 @@
+# state files
+terraform.tfstate*
+
+# terraform provider files
+.terraform/
+
+# terraform lock file
+.terraform.lock.hcl
+
+# filenames i use with terraform plan -out
+destroyplan
+myplan
