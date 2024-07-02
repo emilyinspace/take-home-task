@@ -26,8 +26,8 @@ resource "aws_instance" "web" {
   private_ip                  = var.vm_private_ip
   subnet_id                   = aws_subnet.test_subnet.id
   associate_public_ip_address = true
-
-  key_name = aws_key_pair.ssh-key.key_name
+  security_groups             = [aws_security_group.default.id]
+  key_name                    = aws_key_pair.ssh-key.key_name
 
   tags = {
     Name = "HelloWorld"
