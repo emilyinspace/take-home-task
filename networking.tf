@@ -24,7 +24,7 @@ resource "aws_eip" "nat_eip" {
 /* NAT */
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = element(aws_subnet.public_subnet.*.id, 0)
+  subnet_id     = aws_subnet.public_subnet.id
   depends_on    = [aws_internet_gateway.ig]
   tags = {
     Name        = "nat"
@@ -81,7 +81,7 @@ resource "aws_route" "private_nat_gateway" {
 }
 /* Route table associations */
 resource "aws_route_table_association" "public" {
-  subnet_id      = element(aws_subnet.public_subnet.*.id, count.index)
+  subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public.id
 }
 resource "aws_route_table_association" "private" {
@@ -95,19 +95,23 @@ resource "aws_security_group" "default" {
   vpc_id      = aws_vpc.vpc.id
   depends_on  = [aws_vpc.vpc]
 
+
   ingress {
-    from_port = "0"
-    to_port   = "0"
-    protocol  = "-1"
-    self      = true
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   egress {
-    from_port = "0"
-    to_port   = "0"
-    protocol  = "-1"
-    self      = "true"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
+
   tags = {
     Environment = "terraform"
   }
