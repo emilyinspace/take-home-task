@@ -8,8 +8,9 @@ resource "aws_vpc" "vpc" {
     Environment = "terraform"
   }
 }
-/*==== Subnets ======*/
-/* Internet gateway for the public subnet */
+
+# Ref: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway
+# This is a logical connection between a VPC and the internet. 
 resource "aws_internet_gateway" "ig" {
   vpc_id = aws_vpc.vpc.id
   tags = {
@@ -17,11 +18,15 @@ resource "aws_internet_gateway" "ig" {
     Environment = "terraform"
   }
 }
-/* Elastic IP for NAT */
+
+# Elastic IP for NAT GW
 resource "aws_eip" "nat_eip" {
   depends_on = [aws_internet_gateway.ig]
 }
-/* NAT */
+
+# The NAT GW receives traffic from a VPC and forwards it to the Internet
+# The response of this traffic is returned back to our subnet
+# NAT GW must be associated with the public subnet as it needs to access the internet
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet.id
@@ -31,7 +36,9 @@ resource "aws_nat_gateway" "nat" {
     Environment = "terraform"
   }
 }
-/* Public subnet */
+
+# A subnet that has a route table that references an internet gateway, is considered public
+# This is what we will do with the subnet below, as seen later on
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.public_subnets_cidr
@@ -42,7 +49,9 @@ resource "aws_subnet" "public_subnet" {
     Environment = "terraform"
   }
 }
-/* Private subnet */
+
+# Resources in the private subnet can't be routed to the Internet GW
+# They will have their internet-bound requests sent to the NAT GW 
 resource "aws_subnet" "private_subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.private_subnets_cidr
@@ -53,7 +62,9 @@ resource "aws_subnet" "private_subnet" {
     Environment = "terraform"
   }
 }
-/* Routing table for private subnet */
+
+# Ref: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table
+# First route table, for private subnet
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
   tags = {
@@ -61,7 +72,8 @@ resource "aws_route_table" "private" {
     Environment = "terraform"
   }
 }
-/* Routing table for public subnet */
+
+# Second route table, for public subnet
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
   tags = {
@@ -69,26 +81,35 @@ resource "aws_route_table" "public" {
     Environment = "terraform"
   }
 }
+
+# As the public route table is assigned to the VPC,
+# now we create a route from this table to the internet gateway created
 resource "aws_route" "public_internet_gateway" {
   route_table_id         = aws_route_table.public.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.ig.id
 }
+
+# We route the private 
 resource "aws_route" "private_nat_gateway" {
   route_table_id         = aws_route_table.private.id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat.id
 }
-/* Route table associations */
+
+# Route table association of public subnet with route table
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public.id
 }
+
+# Same as above, for private subnet and route table
 resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.private.id
 }
-/*==== VPC's Default Security Group ======*/
+
+# Default security group for VPC and EC2 instance
 resource "aws_security_group" "default" {
   name        = "terraform-default-sg"
   description = "Default security group to allow inbound/outbound from the VPC"
@@ -104,6 +125,8 @@ resource "aws_security_group" "default" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
+  # Allow all egress, which terraform by default removes
+  # Ref: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
   egress {
     from_port        = 0
     to_port          = 0
