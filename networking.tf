@@ -124,26 +124,26 @@ resource "aws_route_table_association" "private" {
 # Default security group for VPC and EC2 instance
 resource "aws_security_group" "default" {
   name        = "default-sg"
-  description = "Default security group to allow all outbound and only inbound SSH"
+  description = "Default security group to allow all outbound traffic and only inbound SSH"
   vpc_id      = aws_vpc.vpc.id
   depends_on  = [aws_vpc.vpc]
 
 
-  # TODO: make this only for SSH!
+  # allow inbound only for SSH!
   ingress {
     from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
+    to_port          = 22
+    protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  # Allow all egress, which terraform by default removes
+  # Allow all egress, which is a rule that terraform by default removes
   # Ref: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
   egress {
     from_port        = 0
     to_port          = 0
-    protocol         = "-1"
+    protocol         = "-1" # semantically equivalent to all as per the doc above
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
