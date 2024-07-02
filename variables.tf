@@ -22,10 +22,17 @@ variable "subnet_cidr_block" {
   default = "10.0.0.0/24"
 }
 
+/*
 variable "netif_priv_ips" {
   type    = list(string)
   default = ["10.0.0.50"]
 }
+
+variable "vpc_domain" {
+  type    = string
+  default = "vpc"
+}
+*/
 
 # virtual machine instance type
 variable "vm_instance_type" {
@@ -37,11 +44,6 @@ variable "vm_instance_type" {
 variable "vm_private_ip" {
   type    = string
   default = "10.0.1.14"
-}
-
-variable "vpc_domain" {
-  type    = string
-  default = "vpc"
 }
 
 # My SSH public key
@@ -62,4 +64,10 @@ variable "public_subnets_cidr" {
 variable "private_subnets_cidr" {
   type    = string
   default = "10.0.2.0/24"
+}
+
+# Custom tag to track resources by this project
+variable "custom_tag" {
+  type    = string
+  default = "built-by-terraform"
 }
