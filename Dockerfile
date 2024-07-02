@@ -10,19 +10,19 @@ ENV PYTHONUNBUFFERED=1
 # Install python and pip packages 
 RUN apk add --update --no-cache python3 py3-pip
 
-# After python, we proceed with the app
 # Specify the working directory
 WORKDIR /usr/src/app
 
-#COPY the project to /usr/src/app/
+# Copy the project to /usr/src/app/
 COPY . /usr/src/app
 
-# Install python dependencies
+# Create python virtual environment
 RUN python3 -m venv .
-#ENV PATH="/usr/src/app/bin:$PATH"
+#ENV PATH="/usr/src/app/bin:$PATH" TODO: delete
 
+# Activate venv to install dependencies
 RUN . bin/activate && \
-    which python3 && \
+    # TODO: dletewhich python3 && \
     python3 -m pip install -r requirements.txt
 
 # Expose default Flask port
