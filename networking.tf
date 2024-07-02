@@ -102,7 +102,6 @@ resource "aws_route" "public_internet_gateway" {
   gateway_id             = aws_internet_gateway.ig.id
 }
 
-# We route the private 
 resource "aws_route" "private_nat_gateway" {
   route_table_id         = aws_route_table.private.id
   destination_cidr_block = "0.0.0.0/0"
