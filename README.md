@@ -2,3 +2,9 @@
 a small exercise
 
 ## Explanation
+```shell
+export AWS_ACCESS_KEY_ID=KEY
+export AWS_SECRET_ACCESS_KEY=SECRET_KEY
+terraform plan -out myplan
+terraform apply "myplan"
+```
