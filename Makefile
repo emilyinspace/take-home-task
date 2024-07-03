@@ -5,7 +5,7 @@ IMAGE_VERSION = v0.1.0
 CONTAINER_NAME = test-container-flask
 
 build:
-	docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) . 
+	docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) webapp/ 
 	
 	
 run: build
