@@ -27,6 +27,22 @@
       community.docker.docker_container:
         name: chuck-container
         image: "{{ appname }}"
-        exposed_ports:
-          - 5000:5000
+        published_ports:
+          - 0.0.0.0:5000:5000
+          # TODO: fix ipv6 expose port
+          # - "[::/0]"":5000:5000
         state: started
+
+    - name: Install nginx config
+      ansible.builtin.copy:
+        src: proxy.conf
+        dest: /etc/nginx/sites-available/default
+        mode: preserve
+      notify:
+        - Restart nginx
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: restarted
