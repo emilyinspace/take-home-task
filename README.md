@@ -5,7 +5,15 @@ a small exercise
 ```shell
 export AWS_ACCESS_KEY_ID=KEY
 export AWS_SECRET_ACCESS_KEY=SECRET_KEY
-terraform plan -out myplan
-terraform apply "myplan"
+
+# Apply terraform code
+make tf-apply
+
+# Afterwards, put EC2 public ip in inventory
+pub_ip=$(terraform output public_ip | tr -d '"')
+sed -i "s/EC2PUBLICIP/${pub_ip}/g" inventory
+
+# Provision VM
+ansible-playbook provision.yml
 ```
 ### useful link about AWS networking https://stackoverflow.com/a/74455786
