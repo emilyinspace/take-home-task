@@ -1,0 +1,4 @@
+---
+# Ansible requirements for provision/deployment
+collections:
+  - name: community.docker
