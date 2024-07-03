@@ -30,7 +30,8 @@ resource "aws_instance" "web" {
   key_name                    = aws_key_pair.ssh-key.key_name
 
   tags = {
-    Name = "HelloWorld"
+    Name        = "ec2-instance"
+    Environment = var.custom_tag
   }
 }
 
