@@ -1,4 +1,4 @@
-.PHONY: build run stop
+.PHONY: build run stop tf-plan tf-apply tf-des
 
 IMAGE_NAME = chuck_norris_joke
 IMAGE_VERSION = v0.1.0
@@ -16,3 +16,12 @@ stop:
 	docker stop $(CONTAINER_NAME)
 
 
+tf-plan:
+	terraform plan -out myplan
+
+tf-apply: tf-plan
+	terraform apply "myplan"
+
+tf-des:
+	terraform plan -destroy -out destroyplan
+	terraform apply "destroyplan"
