@@ -1,0 +1,95 @@
+# This ansible playbook will be used to install docker and necessary dependencies
+# to the newly created VM. TODO: application deployment
+# Ref: https://docs.docker.com/engine/install/ubuntu/
+
+- name: Provisioning
+  hosts: ec2_vm
+  become: true
+  vars:
+    # Ref: https://stackoverflow.com/a/73096785
+    deb_architecture: {
+      "aarch64": "arm64",
+      "x86_64": "amd64"
+    }
+
+    default_user: "ubuntu"
+    docker_gpg_path: "/etc/apt/keyrings/docker.asc"
+    pkgs_to_remove:
+      - docker.io
+      - docker-doc
+      - docker-compose
+      - docker-compose-v2
+      - podman-docker
+      - containerd
+      - runc
+
+    docker_pkgs:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+    # Essential packages
+    setup_pkgs:
+      - ca-certificates
+      - curl
+      - nginx
+
+    # Services needed
+    services:
+      - docker
+      - nginx
+
+  tasks:
+    - name: Uninstall conflicting packages, update apt cache
+      ansible.builtin.apt:
+        pkg: "{{ pkgs_to_remove }}"
+        state: absent
+
+    - name: Install packages for repo setup and nginx as webserver
+      ansible.builtin.apt:
+        pkg: "{{ setup_pkgs }}"
+        # update cache will run before operation https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html#parameter-update_cache
+        update_cache: true
+        state: present
+
+    - name: Fix keyrings directory perms
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Get docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: "{{ docker_gpg_path }}"
+        mode: '0644'
+
+    - name: Add specified repository into sources list using specified filename
+      ansible.builtin.apt_repository:
+        repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }} \
+               signed-by={{ docker_gpg_path }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} \
+               {{ ansible_distribution_release }} stable"
+        state: present
+        filename: docker
+
+    - name: Install docker packages
+      ansible.builtin.apt:
+        pkg: "{{ docker_pkgs }}"
+        state: present
+        # Update cache, to find packages in newly-added docker repo
+        update_cache: true
+
+    - name: "In docker group, add user {{ default_user }}"
+      ansible.builtin.user:
+        name: "{{ default_user }}"
+        groups: docker
+        append: true
+
+    - name: Enable and start services
+      ansible.builtin.systemd_service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop: "{{ services }}"
