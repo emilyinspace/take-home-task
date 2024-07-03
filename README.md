@@ -13,6 +13,9 @@ make tf-apply
 pub_ip=$(terraform output public_ip | tr -d '"')
 sed -i "s/EC2PUBLICIP/${pub_ip}/g" inventory
 
+# install ansible dependencies
+ansible-galaxy install -r requirements.yml
+ 
 # Provision VM
 ansible-playbook provision.yml
 ```
