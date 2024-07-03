@@ -128,10 +128,19 @@ resource "aws_security_group" "default" {
   depends_on  = [aws_vpc.vpc]
 
 
-  # allow inbound only for SSH!
+  # allow inbound for SSH!
   ingress {
     from_port        = 0
     to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  # allow inbound for http
+  ingress {
+    from_port        = 0
+    to_port          = 80
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
