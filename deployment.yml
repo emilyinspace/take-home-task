@@ -1,6 +1,6 @@
 # This ansible playbook will deploy the python app
 # Ref: https://docs.ansible.com/ansible/latest/collections/community/docker/docker_image_module.html#parameter-source
-
+# Ref: https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html
 - name: Application deployment
   hosts: ec2_vm
   become: true
@@ -22,3 +22,11 @@
             # log_volume: /var/log/myapp
             # listen_port: 8080
         source: build
+
+    - name: "Start {{ appname }}"
+      community.docker.docker_container:
+        name: chuck-container
+        image: "{{ appname }}"
+        exposed_ports:
+          - 5000:5000
+        state: started
