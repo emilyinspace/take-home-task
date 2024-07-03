@@ -12,15 +12,6 @@ from flask import Flask, render_template
 # URL path that gives random jokes
 BASE_URL = "https://api.chucknorris.io/jokes/random"
 
-"""
-TODO: delete
-resp = requests.get(url = BASE_URL)
-resp_json = resp.json()
-resp_dumped = json.dumps(resp.json())
-
-print(resp_json['value'])
-"""
-
 # Creating Flask application
 app = Flask(__name__, template_folder="templates")
 
