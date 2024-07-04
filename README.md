@@ -8,7 +8,7 @@ The file `terraform.md` has the output of `terraform-docs` for a brief understan
 Firstly, let's focus on the `*.tf` files.  
 
 ### networking.tf
-The `networking.tf` file firstly contains the creation of a VPC. Then, we create an internet gateway that acts as a logical connection between the VPC and the internet. There, is also created an Elastic IP which gets allocated on a NAT Gateway. 
+The `networking.tf` file firstly contains the creation of a VPC. Then, we create an internet gateway that acts as a logical connection between the VPC and the internet. Then an Elastic IP gets created which gets allocated on a NAT Gateway. 
 
 The NAT Gateway is necessary in order to receive traffic from the VPC and forward it to the internet. That means that this NAT Gateway needs to be on the public subnet.
 
