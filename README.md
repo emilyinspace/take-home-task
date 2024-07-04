@@ -1,6 +1,6 @@
 
 # take-home-task
-In the file `instructions.md` reside the original instructions. In the file `manual.md` are the steps necessary to test this repository's code. A `Makefile` is also provided to skip some time.
+In the file `instructions.md` reside the original instructions. In the file `manual.md` are the steps necessary to test this repository's code. A `Makefile` is also provided to save some time.
 
 The file `terraform.md` has the output of `terraform-docs` for a brief understanding. Let's split the logic of this project in sections.
 
