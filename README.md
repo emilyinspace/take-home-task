@@ -33,7 +33,7 @@ It contains a few variables. Aside from changing the AWS region, the rest are so
 It contains the information about the provider used (AWS), and which version of terraform needs to be used with this repo.
 
 ## Web Application
-The application (and its files) are in the `webapp` directory. The `requests` library is used for the GET requests. `Flask` is used for serving the HTML template needed. The app gets configured to listen on all interfaces, but that isn't necessary.
+The application (and its files) are in the `webapp` directory. The `requests` library is used for the GET requests. `Flask` is used for serving the HTML template needed.
 
 The `Dockerfile` used vanilla alpine to install `python3` and `pip`, install the project's dependencies on the docker image. Hence, why we use the `RUN` statements.
 
