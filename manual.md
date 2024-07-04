@@ -4,6 +4,9 @@
 export AWS_ACCESS_KEY_ID=KEY
 export AWS_SECRET_ACCESS_KEY=SECRET_KEY
 
+# Get terraform provider files
+make tf-init
+
 # Apply terraform code
 make tf-apply
 
