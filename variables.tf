@@ -16,24 +16,6 @@ variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
 }
 
-# Subnet under the VPC
-variable "subnet_cidr_block" {
-  type    = string
-  default = "10.0.0.0/24"
-}
-
-/*
-variable "netif_priv_ips" {
-  type    = list(string)
-  default = ["10.0.0.50"]
-}
-
-variable "vpc_domain" {
-  type    = string
-  default = "vpc"
-}
-*/
-
 # virtual machine instance type
 variable "vm_instance_type" {
   type    = string
