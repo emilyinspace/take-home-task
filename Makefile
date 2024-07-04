@@ -15,7 +15,9 @@ run: build
 stop:
 	docker stop $(CONTAINER_NAME)
 
-
+tf-init:
+	terraform init
+	
 tf-plan:
 	terraform plan -out myplan
 
